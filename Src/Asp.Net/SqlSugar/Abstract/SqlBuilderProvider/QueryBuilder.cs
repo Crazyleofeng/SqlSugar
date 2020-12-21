@@ -266,7 +266,11 @@ namespace SqlSugar
             {
                 this.OrderByValue = this.PartitionByValue + this.OrderByValue;
             }
-            var isRowNumber = Skip != null || Take != null;
+            
+            //Todo 假设目前用到的都是MSSQL2012+
+            var isRowNumber = false;
+            //var isRowNumber = Skip != null || Take != null;
+            
             var rowNumberString = string.Format(",ROW_NUMBER() OVER({0}) AS RowIndex ", GetOrderByString);
             string groupByValue = GetGroupByString + HavingInfos;
             string orderByValue = (!isRowNumber && this.OrderByValue.HasValue()) ? GetOrderByString : null;
@@ -274,7 +278,7 @@ namespace SqlSugar
             sql.AppendFormat(SqlTemplate, GetSelectValue, GetTableNameString, GetWhereValueString, groupByValue, orderByValue);
             sql.Replace(UtilConstants.ReplaceKey, isRowNumber ? (isIgnoreOrderBy ? null : rowNumberString) : null);
             if (isIgnoreOrderBy) { this.OrderByValue = oldOrderBy; return sql.ToString(); }
-            var result = ToPageSql(sql.ToString(), this.Take, this.Skip);
+            var result = ToPageSql(sql.ToString(), this.Take, this.Skip); // 分页模式按2012 修改
             if (ExternalPageIndex > 0)
             {
                 if (externalOrderBy.IsNullOrEmpty())
@@ -319,6 +323,17 @@ namespace SqlSugar
 
         public virtual string ToPageSql(string sql, int? take, int? skip, bool isExternal = false)
         {
+            #region 假设目前数据库都是2012+
+            var newTemplate = " OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY ";
+            if (!isExternal)
+            {
+                return string.Concat(sql, string.Format(newTemplate, skip.ObjToInt(), take));
+            }
+
+
+            #endregion
+
+
             string temp = isExternal ? ExternalPageTempalte : PageTempalte;
             if (skip != null && take == null)
             {
