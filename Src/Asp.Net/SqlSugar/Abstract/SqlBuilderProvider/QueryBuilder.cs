@@ -327,7 +327,12 @@ namespace SqlSugar
             var newTemplate = " OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY ";
             if (!isExternal)
             {
-                return string.Concat(sql, string.Format(newTemplate, skip.ObjToInt(), take));
+                if (skip == null && take == null)
+                {
+                    return sql;
+                }
+
+                return string.Concat(sql, string.Format(newTemplate, skip.ObjToInt(), take ?? long.MaxValue));
             }
 
 
