@@ -132,6 +132,10 @@ namespace SqlSugar
         {
             return this.Context.Insertable(insertObj).ExecuteReturnIdentity();
         }
+        public virtual long InsertReturnBigIdentity(T insertObj)
+        {
+            return this.Context.Insertable(insertObj).ExecuteReturnBigIdentity();
+        }
         public virtual bool InsertRange(T[] insertObjs)
         {
             return this.Context.Insertable(insertObjs).ExecuteCommand() > 0;
