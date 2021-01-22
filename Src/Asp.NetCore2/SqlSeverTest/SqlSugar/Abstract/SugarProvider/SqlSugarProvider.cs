@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.CSharp;
 namespace SqlSugar
 {
     ///<summary>
