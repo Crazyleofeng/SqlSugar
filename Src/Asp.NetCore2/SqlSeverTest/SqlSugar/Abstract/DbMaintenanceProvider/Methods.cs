@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ namespace SqlSugar
 {
     public abstract partial class DbMaintenanceProvider : IDbMaintenance
     {
+         
+
         #region DML
         public virtual List<string> GetDataBaseList(SqlSugarClient db)
         {
@@ -456,7 +459,17 @@ namespace SqlSugar
                 string nullType = item.IsNullable ? this.CreateTableNull : CreateTableNotNull;
                 string primaryKey = null;
                 string identity = item.IsIdentity ? this.CreateTableIdentity : null;
-                string addItem = string.Format(this.CreateTableColumn, columnName, dataType, dataSize, nullType, primaryKey, identity);
+                string addItem = "";
+                if (this.Context.CurrentConnectionConfig.DbType == DbType.SqlServer && 
+                    (dataType == "datetime2" || dataType == "datetime" || dataType == "int" || dataType == "bigint" || dataType == "real"
+                     || dataType == "text" || dataType =="tinyint" || dataType == "uniqueidentifier" || dataType == "xml" || dataType == "bit" ))
+                {
+                    addItem = $"{columnName} {dataType} {nullType} {primaryKey} {identity}";
+                }
+                else
+                {
+                    addItem = string.Format(this.CreateTableColumn, columnName, dataType, dataSize, nullType, primaryKey, identity);
+                }
                 columnArray.Add(addItem);
             }
             string tableString = string.Format(this.CreateTableSql, this.SqlBuilder.GetTranslationTableName(tableName), string.Join(",\r\n", columnArray));
@@ -483,7 +496,19 @@ namespace SqlSugar
             string nullType = columnInfo.IsNullable ? this.CreateTableNull : CreateTableNotNull;
             string primaryKey = null;
             string identity = null;
-            string result = string.Format(this.AlterColumnToTableSql, tableName, columnName, dataType, dataSize, nullType, primaryKey, identity);
+            string result = "";
+            if (this.Context.CurrentConnectionConfig.DbType == DbType.SqlServer &&
+                (dataType == "datetime2" || dataType == "datetime" || dataType == "int" || dataType == "bigint" || dataType == "real"
+                 || dataType == "text" || dataType == "tinyint" || dataType == "uniqueidentifier" || dataType == "xml" || dataType == "int" ))
+            {
+ 
+                result = string.Format(this.AlterColumnToTableSql, tableName, columnName, dataType, "", nullType, primaryKey, identity);
+            }
+            else
+            {
+                result = string.Format(this.AlterColumnToTableSql, tableName, columnName, dataType, dataSize, nullType, primaryKey, identity);
+            }
+            
             return result;
         }
         protected virtual string GetCacheKey(string cacheKey)
