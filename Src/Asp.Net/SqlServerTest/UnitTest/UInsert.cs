@@ -52,7 +52,7 @@ namespace OrmTest
                 throw new Exception("Unit Insert");
             }
             List<UinitBlukTable> list2 = new List<UinitBlukTable>();
-            for (int i = 0; i <= 20; i++)
+            for (int i = 1; i <= 20; i++)
             {
                 UinitBlukTable data = new UinitBlukTable()
                 {
@@ -64,16 +64,25 @@ namespace OrmTest
             }
             list2.First().Name = null;
             db.DbMaintenance.TruncateTable<UinitBlukTable>();
+            db.Insertable(new UinitBlukTable() { Id = 2, Name = "b", Create = DateTime.Now }).ExecuteCommand();
             var x=Db.Storageable(list2)
-                .SplitInsert(it => !string.IsNullOrEmpty(it.Item.Name))
-                .SplitUpdate(it =>  string.IsNullOrEmpty(it.Item.Name))
+                .SplitInsert(it => it.NotAny(y=>y.Id==it.Item.Id))
+                .SplitUpdate(it => it.Any(y => y.Id == it.Item.Id))
                 .SplitDelete(it=>it.Item.Id>10)
-                .SplitIgnore(it=>it.Item.Id==2)
+                .SplitIgnore(it=>it.Item.Id==1)
                 .SplitError(it => it.Item.Id == 3,"id不能等于3")
+                .SplitError(it => it.Item.Id == 4, "id不能等于4")
+                .SplitError(it => it.Item.Id == 5, "id不能等于5")
+                .SplitError(it => it.Item.Name==null, "name不能等于")
+                .WhereColumns(it=> new { it.Id })
                 .ToStorage();
-            x.AsDeleteable.ExecuteCommand();
-            x.AsInsertable.ExecuteCommand();
-            x.AsUpdateable.ExecuteCommand();
+             x.AsDeleteable.ExecuteCommand();
+             x.AsInsertable.ExecuteCommand();
+             x.AsUpdateable.ExecuteCommand();
+            foreach (var item in x.ErrorList)
+            {
+                Console.Write(item.StorageMessage+" ");
+            }
             db.DbMaintenance.TruncateTable<UinitBlukTable>();
         }
         public class UinitBlukTable
