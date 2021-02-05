@@ -46,6 +46,21 @@ namespace SqlSugar
             }
             return result;
         }
+        public virtual void RefreshTableInfoListCache()
+        {
+            string cacheKey = "DbMaintenanceProvider.GetTableInfoList";
+            cacheKey = GetCacheKey(cacheKey);
+            this.Context.Utilities.GetReflectionInoCacheInstance().Remove<List<DbTableInfo>>(cacheKey);
+            this.GetTableInfoList(true);
+        }
+        public virtual void RefreshColumnInfosByTableName(string tableName)
+        {
+            if (string.IsNullOrEmpty(tableName)) return;
+            string cacheKey = "DbMaintenanceProvider.GetColumnInfosByTableName." + this.SqlBuilder.GetNoTranslationColumnName(tableName).ToLower();
+            cacheKey = GetCacheKey(cacheKey);
+            this.Context.Utilities.GetReflectionInoCacheInstance().Remove<List<DbColumnInfo>>(cacheKey);
+            this.GetColumnInfosByTableName(tableName, true);
+        }
         public virtual List<DbColumnInfo> GetColumnInfosByTableName(string tableName, bool isCache = true)
         {
             if (string.IsNullOrEmpty(tableName)) return new List<DbColumnInfo>();

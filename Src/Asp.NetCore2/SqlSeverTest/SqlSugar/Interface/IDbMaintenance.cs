@@ -12,7 +12,15 @@ namespace SqlSugar
         List<string> GetDataBaseList(SqlSugarClient db);
         List<DbTableInfo> GetViewInfoList(bool isCache=true);
         List<DbTableInfo> GetTableInfoList(bool isCache=true);
+        /// <summary>
+        /// 刷新DbTableInfo缓存
+        /// </summary>
+        void RefreshTableInfoListCache();
         List<DbColumnInfo> GetColumnInfosByTableName(string tableName,bool isCache=true);
+        /// <summary>
+        /// 刷新DbColumnInfo缓存
+        /// </summary>
+        void RefreshColumnInfosByTableName(string tableName);
         List<string> GetIsIdentities(string tableName);
         List<string> GetPrimaries(string tableName);
         #endregion
