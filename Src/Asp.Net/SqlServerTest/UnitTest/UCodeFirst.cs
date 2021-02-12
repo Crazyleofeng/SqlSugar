@@ -15,8 +15,22 @@ namespace OrmTest
                 Db.DbMaintenance.DropTable("UnitCodeTest1");
             Db.CodeFirst.InitTables<UnitCodeTest1>();
             Db.CodeFirst.InitTables<UnitCodeFirstpks2>();
+            var db = Db;
+            db.Aop.OnLogExecuting = (s, p) =>
+            {
+                Console.WriteLine(s);
+            };
+            Db.CodeFirst.InitTables<UnitCodeFirstpks3>();
         }
+        [SqlSugar.SugarTable("UnitCodeFirstpks31","备注"  )]
+        public class UnitCodeFirstpks3
+        {
+            public int id { get; set; }
+            public string name2 { get; set; }
 
+
+ 
+        }
         public class UnitCodeFirstpks2
         {
             [SqlSugar.SugarColumn(IsPrimaryKey =true)]
