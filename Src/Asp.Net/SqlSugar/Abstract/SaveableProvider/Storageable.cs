@@ -42,6 +42,13 @@ namespace SqlSugar
             whereFuncs.Add(new KeyValuePair<StorageType, Func<StorageableInfo<T>, bool>, string>(StorageType.Update, conditions, message));
             return this;
         }
+
+        public IStorageable<T> Saveable(string inserMessage = null,string updateMessage=null)
+        {
+            return this
+                   .SplitUpdate(it => it.Any(),updateMessage)
+                   .SplitInsert(it => true, inserMessage);
+        }
         public IStorageable<T> SplitError(Func<StorageableInfo<T>, bool> conditions, string message = null)
         {
             whereFuncs.Add(new KeyValuePair<StorageType, Func<StorageableInfo<T>, bool>, string>(StorageType.Error, conditions, message));
@@ -76,10 +83,12 @@ namespace SqlSugar
                     dbDataList.AddRange(addItems);
                 });
             }
+            var pkProperties = GetPkProperties(pkInfos);
             var messageList = allDatas.Select(it => new StorageableMessage<T>()
             {
                 Item = it.Item,
-                Database = dbDataList
+                Database = dbDataList,
+                PkFields= pkProperties
             }).ToList();
             foreach (var item in whereFuncs.OrderByDescending(it => (int)it.key))
             {
@@ -120,6 +129,18 @@ namespace SqlSugar
             return result;
         }
 
+        private string[] GetPkProperties(IEnumerable<EntityColumnInfo> pkInfos)
+        {
+            if (whereExpression == null)
+            {
+                return pkInfos.Select(it => it.PropertyName).ToArray();
+            }
+            else
+            {
+                return wherecolumnList.Select(it => it.PropertyName).ToArray();
+            }
+        }
+        List<EntityColumnInfo> wherecolumnList;
         public IStorageable<T> WhereColumns(Expression<Func<T, object>> columns)
         {
             if (columns == null)
@@ -132,6 +153,7 @@ namespace SqlSugar
                                       it.DbColumnName.Equals(y, StringComparison.CurrentCultureIgnoreCase) ||
                                       it.PropertyName.Equals(y, StringComparison.CurrentCultureIgnoreCase))
                                   ).ToList();
+                wherecolumnList = whereColumns;
                 if (whereColumns.Count == 0)
                 {
                     whereColumns = dbColumns.Where(it => it.IsPrimarykey).ToList();
