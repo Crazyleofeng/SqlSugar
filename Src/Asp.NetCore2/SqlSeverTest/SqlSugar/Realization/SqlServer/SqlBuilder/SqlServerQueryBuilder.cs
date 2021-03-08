@@ -28,8 +28,13 @@ namespace SqlSugar
             {
                 this.OrderByValue = this.PartitionByValue + this.OrderByValue;
             }
+            
+
             var isFirst = (Skip == 0 || Skip == null) && Take == 1;
-            var isRowNumber = (Skip != null || Take != null) && !isFirst;
+            //   var isRowNumber = (Skip != null || Take != null) && !isFirst;
+            //Bug 假设目前用到的都是MSSQL2012+
+            var isRowNumber = false;
+            //var isRowNumber = Skip != null || Take != null;
             var rowNumberString = string.Format(",ROW_NUMBER() OVER({0}) AS RowIndex ", GetOrderByString);
             string groupByValue = GetGroupByString + HavingInfos;
             string orderByValue = (!isRowNumber && this.OrderByValue.HasValue()) ? GetOrderByString : null;
