@@ -42,12 +42,14 @@ namespace SqlSugar
         public int ExternalPageIndex { get; set; }
         public int ExternalPageSize { get; set; }
         public int? Take { get; set; }
+        public bool DisableTop { get; set; }
         public string OrderByValue { get; set; }
         public object SelectValue { get; set; }
         public string SelectCacheKey { get; set; }
         public string EntityName { get; set; }
 
         public Type EntityType { get; set; }
+        public Type ResultType { get; set; }
         public string TableWithString { get; set; }
         public string GroupByValue { get; set; }
         public string PartitionByValue { get; set; }
