@@ -476,7 +476,7 @@ namespace SqlSugar
                 string identity = item.IsIdentity ? this.CreateTableIdentity : null;
                 string addItem = "";
                 if (this.Context.CurrentConnectionConfig.DbType == DbType.SqlServer && 
-                    (dataType == "datetime2" || dataType == "datetime" || dataType == "int" || dataType == "bigint" || dataType == "real"
+                    (dataType == "datetime2" || dataType == "date" || dataType == "datetime" || dataType == "int" || dataType == "bigint" || dataType == "real"
                      || dataType == "text" || dataType =="tinyint" || dataType == "uniqueidentifier" || dataType == "xml" || dataType == "bit" ))
                 {
                     addItem = $"{columnName} {dataType} {nullType} {primaryKey} {identity}";
