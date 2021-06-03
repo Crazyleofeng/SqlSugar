@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-
-namespace SqlSugar
+﻿namespace SqlSugar
 {
     public class SqliteBuilder : SqlBuilderProvider
     {

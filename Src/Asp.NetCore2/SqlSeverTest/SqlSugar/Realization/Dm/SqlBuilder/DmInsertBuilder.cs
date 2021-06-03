@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-
-namespace SqlSugar
+﻿namespace SqlSugar
 {
     public class DmInsertBuilder : InsertBuilder
     {
