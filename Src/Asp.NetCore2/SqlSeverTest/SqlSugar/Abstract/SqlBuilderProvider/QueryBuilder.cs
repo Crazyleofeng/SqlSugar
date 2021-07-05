@@ -525,6 +525,7 @@ namespace SqlSugar
 
         #region Get SQL Partial
 
+        public string Offset { get; set; }
         public virtual string GetSelectValue
         {
             get
@@ -695,6 +696,8 @@ namespace SqlSugar
         }
 
         #endregion Get SQL Partial
+
+        #endregion
 
         private string GetTableName(string entityName)
         {

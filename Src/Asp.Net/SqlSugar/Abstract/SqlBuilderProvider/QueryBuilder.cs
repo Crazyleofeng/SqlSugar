@@ -497,6 +497,7 @@ namespace SqlSugar
         #endregion
 
         #region Get SQL Partial
+        public string Offset { get; set; }
         public virtual string GetSelectValue
         {
             get
@@ -659,6 +660,7 @@ namespace SqlSugar
                 return this.GroupByValue;
             }
         }
+
 
         #endregion
 
