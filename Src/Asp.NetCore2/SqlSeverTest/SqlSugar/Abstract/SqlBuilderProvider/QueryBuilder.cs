@@ -697,8 +697,7 @@ namespace SqlSugar
 
         #endregion Get SQL Partial
 
-        #endregion
-
+ 
         private string GetTableName(string entityName)
         {
             var result = this.Context.EntityMaintenance.GetTableName(entityName);
